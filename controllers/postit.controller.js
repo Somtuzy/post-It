@@ -199,6 +199,34 @@ class PostitController{
             })
         }  
     }
+
+    // Getting a user's postits by handle
+    async getUserPostsByHandle(req, res) {
+        try {
+            let { handle } = req.params
+            const existingUser = await user.find({username: handle})
+
+            const existingPosts = await postit.findAll({author: existingUser._id, deleted: false})
+
+            // Sends a message if the specified postit does not exist
+            if(!existingPosts) return res.status(404).send({
+                    success: false,
+                    message: 'This postit does not exist'
+                })
+
+            // Sends a success message and displays postit
+            return res.status(200).send({
+                success: true,
+                message: 'Postits fetched successfully!',
+                data: existingPosts
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
+    }
 }
 
 module.exports = new PostitController()
