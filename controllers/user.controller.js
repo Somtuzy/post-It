@@ -1,5 +1,5 @@
 const user = require("../services/user.service");
-const hashPassword = require("../services/bcrypt.service");
+const { hashPassword, verifyPassword } = require("../services/bcrypt.service");
 const generateToken = require("../services/jwt.service");
 const generateRandomAvatar = require("../services/avatar.service");
 
@@ -80,6 +80,84 @@ class UserController {
       });
     }
   }
+
+    // Signs a registered user in and gives them access to protected content with a token
+    async login(req, res) {
+      try {
+        const { username, email, password } = req.body;
+        let foundUser;
+
+        // Makes sure the user provides their email/username and password
+        if (!email && !username)
+          return res.send("Please enter your email address or username");
+        if (!password) return res.send("Please enter your password");
+
+        // Makes sure a user isn't signing in with an email and username associated with a disabled user
+        foundUser = await user.findWithDetails({
+          $or: [{ username: username }, { email: email }],
+        });
+
+        if (foundUser && email && foundUser.deleted === true)
+          return res.status(403).send({
+            message: `This email is associated with a disabled account, please go to https://postit.onrender.com/users/recover to sign in and reactivate your account`,
+            status: "failed",
+          });
+
+        if (foundUser && username && foundUser.deleted === true)
+          return res.status(403).send({
+            message: `This username is associated with a disabled account, please go to https://postit.onrender.com/users/recover to sign in and reactivate your account`,
+            status: "failed",
+          });
+
+        // Returns a message if user doesn't exist
+        if (!foundUser || foundUser === null) {
+          return res.status(404).send({
+            message: `User does not exist, would you like to sign up instead?`,
+          });
+        }
+
+        // Checks if the password input by the client matches the protected password of the returned user
+        const isValid = verifyPassword(password, foundUser.password);
+
+        // Sends a message if the input password doesn't match
+        if (!isValid) {
+          return res.status(400).send({
+            message: "Incorrect password, please retype your password",
+            status: "failed",
+          });
+        }
+
+        // Stores the returned user's unique id in an object to generate a token for the user
+        const token = generateToken({ id: foundUser._id });
+
+        // This saves the token as a cookie for the duration of its validity just to simulate how the request header works for the purpose of testing.
+        res.cookie("token", token, { httpOnly: true });
+
+        // Removes password from output
+        foundUser = await user.find({
+          $and: [
+            { _id: foundUser._id },
+            { username: foundUser.username },
+            { email: foundUser.email },
+          ],
+        });
+
+        // Sends success message on the console
+        console.log(`Token successfully generated for ${foundUser}`);
+
+        // Sends the token to the client side for it to be set as the request header using axios
+        return res.json({
+          token: token,
+          user: foundUser,
+          message: "User succesfully logged in!",
+        });
+      } catch (err) {
+        return res.status(400).send({
+          message: err,
+          status: "failed",
+        });
+      }
+    }
 }
 
 module.exports = new UserController();
