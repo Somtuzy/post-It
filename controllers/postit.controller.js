@@ -147,6 +147,32 @@ class PostitController{
             })
         } 
     }
+
+    // Getting a user's postits
+    async getUserPosts(req, res) {
+        try {
+            const { userid } = req.params
+            const postits = await postit.findAll({author: userid, deleted: false})
+
+            // Sends a message if no users exist
+            if(!postits) return res.status(404).send({
+                    success: false,
+                    message: 'This user has no postits'
+                })
+
+            // Sends a success message and displays users
+            return res.status(200).send({
+                success: true,
+                message: 'Postits fetched successfully!',
+                data: postits
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        } 
+    }
 }
 
 module.exports = new PostitController()
