@@ -18,12 +18,14 @@ class PostitController{
 
             newPost = await postit.find({_id: newPost._id})
 
-            return res.status(200).send({
-                message: 'Post created',
+            return res.status(200).json({
+                success: true,
+                message: 'Postit created successfully!',
                 post: newPost
             })
         } catch (err) {
-            return res.send({
+            return res.json({
+                success: false,
                 message: err.message
             })
         }
@@ -38,26 +40,31 @@ class PostitController{
 
             // Finds the post
             const existingPost = await postit.find({_id: id})
-            if(!existingPost) return res.status(404).send({
-                message: 'post not found'
+            if(!existingPost) return res.status(404).json({
+                success: false,
+                message: 'Postit not found!'
             })
 
-            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).send({
-                message: 'you are not authorised to edit this post'
+            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
+                success: false,
+                message: 'You are not authorised to edit this post'
             })
 
-            if (!content) return res.status(403).send({
-                message: 'content cannot be empty'
+            if (!content) return res.status(403).json({
+                success: false,
+                message: 'Postit field cannot be empty'
             })
             
             const updatedPost = await postit.update(id, {content: content})
 
-            return res.status(200).send({
+            return res.status(200).json({
+                success: true,
                 message: 'Post updated',
                 post: updatedPost
             })
         } catch (err) {
-            return res.send({
+            return res.json({
+                success: false,
                 message: err.message
             })
         }
@@ -71,12 +78,14 @@ class PostitController{
 
             // Finds the postit
             const existingPost = await postit.find({_id: id})
-            if(!existingPost) return res.status(404).send({
-                message: 'post not found'
+            if(!existingPost) return res.status(404).json({
+                success: false,
+                message: 'Postit was not found'
             })
 
-            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).send({
-                message: 'you are not authorised to delete this postit'
+            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
+                success: false,
+                message: 'You are not authorised to delete this postit'
             })
 
             // Deletes the postit
@@ -84,14 +93,14 @@ class PostitController{
             await existingPost.save()
             
             // Sends a success message and displays the deleted postit
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Postit deleted successfully!',
                 data: existingPost
             })
         } catch (err) {
             return res.send({
-                error: err,
+                success: false,
                 message: err.message
             })
         }  
@@ -104,13 +113,13 @@ class PostitController{
             const existingPost = await postit.find({_id: id, deleted: false})
 
             // Sends a message if the specified postit does not exist
-            if(!existingPost) return res.status(404).send({
+            if(!existingPost) return res.status(404).json({
                     success: false,
                     message: 'This postit does not exist'
                 })
 
             // Sends a success message and displays postit
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Postit fetched successfully!',
                 data: existingPost
@@ -129,20 +138,20 @@ class PostitController{
             const postits = await postit.findAll({deleted: false})
 
             // Sends a message if no postits exist
-            if(!postits) return res.status(404).send({
+            if(!postits) return res.status(404).json({
                     success: false,
                     message: 'There are no postits on your database'
                 })
 
             // Sends a success message and displays postits
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Postits fetched successfully!',
                 data: postits
             })
         } catch (err) {
             return res.send({
-                error: err,
+                success: false,
                 message: err.message
             })
         } 
@@ -155,20 +164,20 @@ class PostitController{
             const postits = await postit.findAll({author: userid, deleted: false})
 
             // Sends a message if no postits exist
-            if(!postits) return res.status(404).send({
+            if(!postits) return res.status(404).json({
                     success: false,
                     message: 'This user has no postits'
                 })
 
             // Sends a success message and displays postits
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Postits fetched successfully!',
                 data: postits
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         } 
@@ -181,20 +190,20 @@ class PostitController{
             const existingPost = await postit.find({_id: id, author: userid, deleted: false})
 
             // Sends a message if the specified postit does not exist
-            if(!existingPost) return res.status(404).send({
+            if(!existingPost) return res.status(404).json({
                     success: false,
                     message: 'This postit does not exist'
                 })
 
             // Sends a success message and displays postit
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Postit fetched successfully!',
                 data: existingPost
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         }  
@@ -209,20 +218,20 @@ class PostitController{
             const existingPosts = await postit.findAll({author: existingUser._id, deleted: false})
 
             // Sends a message if the specified postit does not exist
-            if(!existingPosts) return res.status(404).send({
+            if(!existingPosts) return res.status(404).json({
                     success: false,
                     message: 'This postit does not exist'
                 })
 
             // Sends a success message and displays postit
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Postits fetched successfully!',
                 data: existingPosts
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         }  

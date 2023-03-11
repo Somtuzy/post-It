@@ -5,20 +5,17 @@ const validateUserInputs = (req, res, next) => {
   try {
       const validateInput = userSchema.validate(req.body)
 
-      if(validateInput.error) {
-          return res.status(400).send({
+      if(validateInput.error) return res.status(400).json({
             success: false,
-            status: 'failed',
             errormessage: validateInput.error.details[0].message
         })
-      } else {
-        console.log("Validated successfully");
+      
+        console.log("User input validated successfully");
         next()
-      } 
   } catch (err) {
-        return res.status(400).send({
-          message: err,
-          status: 'failed'
+        return res.status(400).json({
+          message: err.message,
+          success: false
         })
   }
 }
@@ -28,20 +25,17 @@ const validatePostitInputs = (req, res, next) => {
     try {
         const validateInput = postitSchema.validate(req.body)
   
-        if(validateInput.error) {
-            return res.status(400).send({
+        if(validateInput.error) return res.status(400).json({
               success: false,
-              status: 'failed',
               errormessage: validateInput.error.details[0].message
           })
-        } else {
-          console.log("Postit validated successfully");
+
+          console.log("Postit input validated successfully");
           next()
-        } 
     } catch (err) {
-          return res.status(400).send({
+          return res.status(400).json({
             message: err,
-            status: 'failed'
+            success: false
           })
     }
 }
@@ -49,22 +43,18 @@ const validatePostitInputs = (req, res, next) => {
 // Catching required fields errors when creating a user
 const validateCommentInputs = (req, res, next) => {
     try {
-        const validateInput = commentSchema.validate(req.body)
-  
-        if(validateInput.error) {
-            return res.status(400).send({
+          const validateInput = commentSchema.validate(req.body)
+
+          if(validateInput.error) return res.status(400).json({
               success: false,
-              status: 'failed',
               errormessage: validateInput.error.details[0].message
           })
-        } else {
-          console.log("Comment validated successfully");
+          console.log("Comment input validated successfully");
           next()
-        } 
     } catch (err) {
-          return res.status(400).send({
+          return res.status(400).json({
             message: err,
-            status: 'failed'
+            success: false
           })
     }
 }

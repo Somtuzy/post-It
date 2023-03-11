@@ -8,7 +8,7 @@ const connect = (Uri) => {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => console.log('Connected to your database'))
+.then(() => console.log('Database connection successful!'))
 .catch(err => console.log(err,':', err.message))
 }
 
