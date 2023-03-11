@@ -181,6 +181,32 @@ class CommentController{
             })
         }  
     }
+
+    // Getting all a user's comments
+    async getUserComments(req, res) {
+        try {
+            const { userid, postid } = req.params
+            const comments = await comment.findAll({author: userid, postit: postid, deleted: false})
+
+            // Sends a message if no comments exist
+            if(!comments) return res.status(404).send({
+                    success: false,
+                    message: 'This user has no comments'
+                })
+
+            // Sends a success message and displays comments
+            return res.status(200).send({
+                success: true,
+                message: 'Comments fetched successfully!',
+                data: comments
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        } 
+    }
 }
 
 module.exports = new CommentController()
