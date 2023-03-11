@@ -286,6 +286,32 @@ class UserController {
       });
     }
   }
+
+  // Getting all users
+  async getUsers(req, res) {
+    try {
+      const users = await user.findAll({ deleted: false });
+
+      // Sends a message if no users exist
+      if (!users)
+        return res.status(404).send({
+          success: false,
+          message: "There are no users on your database",
+        });
+
+      // Sends a success message and displays users
+      return res.status(200).send({
+        success: true,
+        message: "Users fetched successfully!",
+        data: users,
+      });
+    } catch (err) {
+      return res.send({
+        error: err,
+        message: err.message,
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
