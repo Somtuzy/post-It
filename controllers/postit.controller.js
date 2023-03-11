@@ -28,6 +28,40 @@ class PostitController{
             })
         }
     }
+
+    // Updating a postit
+    async updatePost(req, res) {
+        try {
+            const { id } = req.params
+            const { content } = req.body
+            const userId = req.user.id
+
+            // Finds the post
+            const existingPost = await postit.find({_id: id})
+            if(!existingPost) return res.status(404).send({
+                message: 'post not found'
+            })
+
+            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).send({
+                message: 'you are not authorised to edit this post'
+            })
+
+            if (!content) return res.status(403).send({
+                message: 'content cannot be empty'
+            })
+            
+            const updatedPost = await postit.update(id, {content: content})
+
+            return res.status(200).send({
+                message: 'Post updated',
+                post: updatedPost
+            })
+        } catch (err) {
+            return res.send({
+                message: err.message
+            })
+        }
+    }
 }
 
 module.exports = new PostitController()
