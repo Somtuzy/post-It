@@ -130,6 +130,31 @@ class CommentController{
             })
         }  
     }
+
+    // Getting all comments
+    async getComments(req, res) {
+        try {
+            const comments = await comment.findAll({deleted: false})
+
+            // Sends a message if no comments exist
+            if(!comments) return res.status(404).send({
+                    success: false,
+                    message: 'There are no comments on your database'
+                })
+
+            // Sends a success message and displays comments
+            return res.status(200).send({
+                success: true,
+                message: 'Comments fetched successfully!',
+                data: comments
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        } 
+    }
 }
 
 module.exports = new CommentController()
