@@ -34,6 +34,40 @@ class CommentController{
             })
         }
     }
+
+    // Updating a comment
+    async updateComment(req, res) {
+        try {
+            const { id } = req.params
+            const { content } = req.body
+            const userId = req.user.id
+
+            // Finds the comment
+            const existingComment = await comment.find({_id: id, deleted: false})
+            if(!existingComment) return res.status(404).send({
+                message: 'Comment not found'
+            })
+
+            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).send({
+                message: 'You are not authorised to edit this comment'
+            })
+
+            if(!content) return res.status(403).send({
+                message: 'Please provide a content'
+            })
+            
+            const updatedComment = await comment.update(id, {content: content})
+
+            return res.status(200).send({
+                message: 'Comment updated',
+                post: updatedComment
+            })
+        } catch (err) {
+            return res.send({
+                message: err.message
+            })
+        }
+    }
 }
 
 module.exports = new CommentController()
