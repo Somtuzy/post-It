@@ -7,36 +7,36 @@ class PostItService extends BaseService {
   }
 
   async find(filter) {
-    return await this.model.findOne(filter, "-deleted").sort({ createdAt: -1 });
-    // .populate({path: 'author', select: 'username'})
-    // .populate({
-    //     path: 'comments',
-    //     select: 'content',
-    //     match: {deleted: false},
-    //     populate: {
-    //         path: 'author',
-    //         select: 'username',
-    //         match: {deleted: false}
-    //     }
-    // })
-    // .exec()
+    return await this.model.findOne(filter, "-deleted").sort({ createdAt: -1 })
+    .populate({path: 'author', select: 'username'})
+    .populate({
+        path: 'comments',
+        select: 'content',
+        match: {deleted: false},
+        populate: {
+            path: 'author',
+            select: 'username',
+            match: {deleted: false}
+        }
+    })
+    .exec()
   }
 
   async findAll(filter) {
-    return await this.model.find(filter, "-deleted");
-    //   .sort({ createdAt: -1 })
-    //   .populate({ path: "author", select: "username" })
-    //   .populate({
-    //     path: "comments",
-    //     select: "content",
-    //     match: { deleted: false },
-    //     populate: {
-    //       path: "author",
-    //       select: "username",
-    //       match: { deleted: false },
-    //     },
-    //   })
-    //   .exec();
+    return await this.model.find(filter, "-deleted")
+      .sort({ createdAt: -1 })
+      .populate({ path: "author", select: "username" })
+      .populate({
+        path: "comments",
+        select: "content",
+        match: { deleted: false },
+        populate: {
+          path: "author",
+          select: "username",
+          match: { deleted: false },
+        },
+      })
+      .exec();
   }
 
   async updateMany(filter, data) {
