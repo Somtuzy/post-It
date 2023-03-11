@@ -122,6 +122,31 @@ class PostitController{
             })
         }  
     }
+
+    // Getting all postits
+    async getPosts(req, res) {
+        try {
+            const postits = await postit.findAll({deleted: false})
+
+            // Sends a message if no postits exist
+            if(!postits) return res.status(404).send({
+                    success: false,
+                    message: 'There are no postits on your database'
+                })
+
+            // Sends a success message and displays postits
+            return res.status(200).send({
+                success: true,
+                message: 'Postits fetched successfully!',
+                data: postits
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        } 
+    }
 }
 
 module.exports = new PostitController()

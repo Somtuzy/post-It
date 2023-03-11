@@ -23,21 +23,20 @@ class PostItService extends BaseService {
   }
 
   async findAll(filter) {
-    return await this.model
-      .find(filter, "-deleted")
-      .sort({ createdAt: -1 })
-      .populate({ path: "author", select: "username" })
-      .populate({
-        path: "comments",
-        select: "content",
-        match: { deleted: false },
-        populate: {
-          path: "author",
-          select: "username",
-          match: { deleted: false },
-        },
-      })
-      .exec();
+    return await this.model.find(filter, "-deleted");
+    //   .sort({ createdAt: -1 })
+    //   .populate({ path: "author", select: "username" })
+    //   .populate({
+    //     path: "comments",
+    //     select: "content",
+    //     match: { deleted: false },
+    //     populate: {
+    //       path: "author",
+    //       select: "username",
+    //       match: { deleted: false },
+    //     },
+    //   })
+    //   .exec();
   }
 
   async updateMany(filter, data) {
