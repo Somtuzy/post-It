@@ -10,6 +10,9 @@ const generateToken = (payload) => {
     return jwt.sign(payload, secretKey, {expiresIn: duration})  
 }
 
+// Verifies the authenticity of a user by checking the validity of the user's token against the secret key
+const verifyToken = (payload) => {
+    return jwt.verify(payload, secretKey)  
+}
 
-
-module.exports = generateToken
+module.exports = { generateToken, verifyToken }
