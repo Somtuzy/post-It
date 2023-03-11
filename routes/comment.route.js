@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const authenticate = require('../middlewares/authentication')
-const { createComment, updateComment, deleteComment } = require('../controllers/comment.controller')
+const { createComment, updateComment, deleteComment, getComment } = require('../controllers/comment.controller')
 const { validateCommentInputs } = require('../middlewares/validate')
 
 const router = Router()
@@ -11,6 +11,7 @@ router.route('/postits/:postid/comments')
 
 router.route('/postits/:postid/comments/:id')
 .put(authenticate, updateComment)
+.get(authenticate, getComment)
 .delete(authenticate, deleteComment)
 
 module.exports = router;

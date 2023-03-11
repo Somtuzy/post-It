@@ -103,6 +103,33 @@ class CommentController{
             })
         }  
     }
+
+    // Getting one comment by id
+    async getComment(req, res) {
+        try {
+            let { id } = req.params
+    
+            const existingComment = await comment.find({_id: id, deleted: false})
+
+            // Sends a message if the comment does not exist
+            if(!existingComment) return res.status(404).send({
+                    success: false,
+                    message: 'Comment does not exist'
+                })
+
+            // Sends a success message and displays comment
+            return res.status(200).send({
+                success: true,
+                message: 'Comment fetched successfully!',
+                data: existingComment
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
+    }
 }
 
 module.exports = new CommentController()
