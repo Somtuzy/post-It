@@ -62,6 +62,40 @@ class PostitController{
             })
         }
     }
+
+     // Deleting a postit
+     async deletePost(req, res) {
+        try {
+            const { id } = req.params
+            const userId = req.user.id
+
+            // Finds the postit
+            const existingPost = await postit.find({_id: id})
+            if(!existingPost) return res.status(404).send({
+                message: 'post not found'
+            })
+
+            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).send({
+                message: 'you are not authorised to delete this postit'
+            })
+
+            // Deletes the postit
+            existingPost.deleted = true;
+            await existingPost.save()
+            
+            // Sends a success message and displays the deleted postit
+            return res.status(200).send({
+                success: true,
+                message: 'Postit deleted successfully!',
+                data: existingPost
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
+    }
 }
 
 module.exports = new PostitController()
