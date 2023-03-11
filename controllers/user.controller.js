@@ -256,6 +256,36 @@ class UserController {
       });
     }
   }
+
+  // Getting a user by id
+  async getUser(req, res) {
+    try {
+      let id = req.params.id;
+      const existingUser = await user.find(
+        { _id: id, deleted: false },
+        "-password"
+      );
+
+      // Sends a message if the specified user does not exist
+      if (!existingUser)
+        return res.status(404).send({
+          success: false,
+          message: "This user does not exist",
+        });
+
+      // Sends a success message and displays user
+      return res.status(200).send({
+        success: true,
+        message: "User fetched successfully!",
+        data: existingUser,
+      });
+    } catch (err) {
+      return res.send({
+        error: err,
+        message: err.message,
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
