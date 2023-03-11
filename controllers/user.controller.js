@@ -1,6 +1,6 @@
 const user = require("../services/user.service");
 const { hashPassword, verifyPassword } = require("../services/bcrypt.service");
-const generateToken = require("../services/jwt.service");
+const { generateToken } = require("../services/jwt.service");
 const generateRandomAvatar = require("../services/avatar.service");
 
 class UserController {
@@ -158,6 +158,56 @@ class UserController {
         });
       }
     }
+
+  // Updating a user
+  async updateUser(req, res) {
+    try {
+      const { fullname, username, email, password, age } = req.body;
+      const id = req.params.id;
+      const reqUserId = req.user.id;
+
+      // Checks if user already exists
+      const existingUser = await user.find({ _id: id, deleted: false });
+
+      // Sends a message if the specified user does not exist
+      if (!existingUser) {
+        return res.status(404).send({
+          success: false,
+          message: "This user does not exist",
+        });
+      }
+
+      if (reqUserId.toString() !== existingUser._id.toString())
+        return res.status(403).send({
+          message: "you are not authorised to update this user",
+          status: "failed",
+        });
+
+      // Updates the user based on what was provided
+      let updatedUser;
+      if (fullname) updatedUser = await user.update(id, { fullname: fullname });
+      if (username) updatedUser = await user.update(id, { username: username });
+      if (email) updatedUser = await user.update(id, { email: email });
+      if (age) updatedUser = await user.update(id, { age: age });
+      if (password) updatedUser = await user.update(id, { password: password });
+
+      updatedUser = await user.find(
+        { _id: updatedUser._id },
+        "-password -replies -postits -deleted"
+      );
+      // Sends a success message and displays the updated user
+      return res.status(200).send({
+        success: true,
+        message: "User updated successfully!",
+        data: updatedUser,
+      });
+    } catch (err) {
+      return res.send({
+        error: err,
+        message: err.message,
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
