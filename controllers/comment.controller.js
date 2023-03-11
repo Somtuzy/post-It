@@ -55,7 +55,7 @@ class CommentController{
             if(!content) return res.status(403).send({
                 message: 'Please provide a content'
             })
-            
+
             const updatedComment = await comment.update(id, {content: content})
 
             return res.status(200).send({
@@ -67,6 +67,41 @@ class CommentController{
                 message: err.message
             })
         }
+    }
+
+    // Deleting a comment
+    async deleteComment(req, res) {
+        try {
+            const { id } = req.params
+            const userId = req.user.id
+            
+            // Finds the comment
+            const existingComment = await comment.find({_id: id, deleted: false})
+            
+            if(!existingComment) return res.status(404).send({
+                message: 'Comment not found'
+            })
+
+            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).send({
+                message: 'You are not authorised to delete this comment'
+            })
+
+            // Deletes the user
+            existingComment.deleted = true;
+            await existingComment.save()
+            
+            // Sends a success message and displays the deleted comment
+            return res.status(200).send({
+                success: true,
+                message: 'Comment deleted successfully!',
+                data: existingComment
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
     }
 }
 
