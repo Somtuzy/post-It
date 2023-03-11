@@ -155,6 +155,32 @@ class CommentController{
             })
         } 
     }
+
+    // Getting a user's comment by id
+    async getUserCommentById(req, res) {
+        try {
+            let { userid, postid, id } = req.params
+            const existingComment = await comment.find({_id: id, author: userid, postit: postid, deleted: false})
+
+            // Sends a message if the comment does not exist
+            if(!existingComment) return res.status(404).send({
+                    success: false,
+                    message: 'This comment does not exist'
+                })
+
+            // Sends a success message and displays comment
+            return res.status(200).send({
+                success: true,
+                message: 'Comment fetched successfully!',
+                data: existingPost
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
+    }
 }
 
 module.exports = new CommentController()
