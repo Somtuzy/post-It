@@ -96,6 +96,32 @@ class PostitController{
             })
         }  
     }
+
+    // Getting one postit by id
+    async getPost(req, res) {
+        try {
+            let { id } = req.params
+            const existingPost = await postit.find({_id: id, deleted: false})
+
+            // Sends a message if the specified postit does not exist
+            if(!existingPost) return res.status(404).send({
+                    success: false,
+                    message: 'This postit does not exist'
+                })
+
+            // Sends a success message and displays postit
+            return res.status(200).send({
+                success: true,
+                message: 'Postit fetched successfully!',
+                data: existingPost
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
+    }
 }
 
 module.exports = new PostitController()
