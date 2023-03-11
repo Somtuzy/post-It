@@ -154,13 +154,13 @@ class PostitController{
             const { userid } = req.params
             const postits = await postit.findAll({author: userid, deleted: false})
 
-            // Sends a message if no users exist
+            // Sends a message if no postits exist
             if(!postits) return res.status(404).send({
                     success: false,
                     message: 'This user has no postits'
                 })
 
-            // Sends a success message and displays users
+            // Sends a success message and displays postits
             return res.status(200).send({
                 success: true,
                 message: 'Postits fetched successfully!',
@@ -172,6 +172,32 @@ class PostitController{
                 message: err.message
             })
         } 
+    }
+
+    // Getting a user's postit by id
+    async getUserPostById(req, res) {
+        try {
+            let { userid, id } = req.params
+            const existingPost = await postit.find({_id: id, author: userid, deleted: false})
+
+            // Sends a message if the specified postit does not exist
+            if(!existingPost) return res.status(404).send({
+                    success: false,
+                    message: 'This postit does not exist'
+                })
+
+            // Sends a success message and displays postit
+            return res.status(200).send({
+                success: true,
+                message: 'Postit fetched successfully!',
+                data: existingPost
+            })
+        } catch (err) {
+            return res.send({
+                error: err,
+                message: err.message
+            })
+        }  
     }
 }
 
