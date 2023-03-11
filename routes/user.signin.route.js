@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const { signup, login } = require('../controllers/user.controller') 
 const { recover } = require('../controllers/user.recover.controller') 
-const validateUserInputs = require('../middlewares/validate')
+const { validateUserInputs } = require('../middlewares/validate')
 
 const router = Router()
 
