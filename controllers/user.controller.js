@@ -208,6 +208,54 @@ class UserController {
       });
     }
   }
+
+  // Deleting a user
+  async deleteUser(req, res) {
+    try {
+      const id = req.params.id;
+      const reqUserId = req.user.id;
+
+      const existingUser = await user.find(
+        { _id: id, deleted: false },
+        "-password"
+      );
+
+      // Sends a message if the specified user does not exist
+      if (!existingUser)
+        return res.status(404).send({
+          success: false,
+          message: "This user does not exist",
+        });
+
+      if (reqUserId.toString() !== existingUser._id.toString())
+        return res.status(403).send({
+          message: "you are not authorised to delete this user",
+          status: "failed",
+        });
+
+      // This soft deletes a user
+      existingUser.deleted = true;
+      await existingUser.save();
+
+      // // This also soft deletes all a user's postits
+      // await postit.updateMany({author: existingUser._id}, {deleted: true});
+
+      // // This also soft deletes all a user's replies
+      // await comment.updateMany({author: existingUser._id}, {deleted: true});
+
+      // Sends a success message and displays the deleted user
+      return res.status(200).send({
+        success: true,
+        message: "User deleted successfully!",
+        data: existingUser,
+      });
+    } catch (err) {
+      return res.send({
+        error: err,
+        message: err.message,
+      });
+    }
+  }
 }
 
 module.exports = new UserController();
