@@ -93,7 +93,7 @@ class CommentController{
 
             if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
                 success: false,
-                message: 'You are not authorised to delete this comment'
+                message: 'You cannot delete this comment'
             })
 
             // Deletes the user
