@@ -92,6 +92,7 @@ class UserController {
         if (!email && !username)
           return res.json(`Please enter your email address or username to continue`);
         if (!password) return res.json(`Please enter your password to continue`);
+        if (!email && !username && !password) return res.json(`Fields cannot be empty`);
 
         // Makes sure a user isn't signing in with an email and username associated with a disabled user
         foundUser = await user.findWithDetails({
@@ -175,8 +176,8 @@ class UserController {
       // Sends a message if the specified user does not exist
       if (!existingUser) {
         return res.status(404).json({
-          success: false,
           message: `This user does not exist`,
+          success: false
         });
       }
 
