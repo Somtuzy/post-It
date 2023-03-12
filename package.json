@@ -1,14 +1,14 @@
 {
-  "name": "sample",
+  "name": "postit",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build": "npm install & npm fund",
+    "build": "npm install",
     "start": "node ./src/app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "somtuzyonyeka",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
