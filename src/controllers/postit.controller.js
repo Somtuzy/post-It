@@ -193,8 +193,9 @@ class PostitController{
     // Getting a user's postit by id
     async getUserPostById(req, res) {
         try {
-            let { userid, id } = req.params
-            const existingPost = await postit.find({_id: id, author: userid, deleted: false})
+            const { userid, id } = req.params
+            const author = await user.find({_id: userid})
+            const existingPost = await postit.find({_id: id, author: author._id, deleted: false})
 
             // Sends a message if the specified postit does not exist
             if(!existingPost) return res.status(404).json({
