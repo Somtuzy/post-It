@@ -4,6 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "dev": "nodemon ./src/app.js",
+    "build": "npm install",
     "start": "node ./src/app.js"
   },
   "keywords": [],
