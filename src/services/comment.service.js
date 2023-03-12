@@ -40,9 +40,9 @@ class CommentService extends BaseService {
         .exec();
     }
 
-    async updateMany(filter, data) {
-        return await this.model.updateMany(filter, data)
-    }
+    // async updateMany(filter, data) {
+    //     return await this.model.updateMany(filter, data)
+    // }
 }
 
 const comment = new CommentService(Comments)

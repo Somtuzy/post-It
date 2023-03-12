@@ -16,7 +16,6 @@ router.route('/postits/:postid/comments')
 .post(authenticate, validateCommentInputs, createComment)
 .get(authenticate, getComments)
 
-
 router.route('/postits/:postid/comments/:id')
 .put(authenticate, updateComment)
 .get(authenticate, getComment)

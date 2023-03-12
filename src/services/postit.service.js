@@ -39,9 +39,9 @@ class PostItService extends BaseService {
       .exec();
   }
 
-  async updateMany(filter, data) {
-    return await this.model.updateMany(filter, data);
-  }
+  // async updateMany(filter, data) {
+  //   return await this.model.updateMany(filter, data);
+  // }
 
   async updateOne(filter, data) {
     return await this.model.updateOne(filter, { $push: { comments: data } });

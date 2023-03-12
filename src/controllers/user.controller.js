@@ -16,15 +16,15 @@ class UserController {
 
       if (existingUser && existingUser.username === username) {
         // Gives forbidden message
-        return res.status(403).send({
+        return res.status(403).json({
           message: "User already exists with this username",
-          status: "failed",
+          success: false
         });
       }
 
       if (existingUser && existingUser.email === email) {
         // Gives forbidden message
-        return res.status(403).send({
+        return res.status(403).json({
           message: "User already exists with this email",
           status: "failed",
         });
@@ -69,14 +69,15 @@ class UserController {
 
       // Sends the token to the client side for it to be set as the request header using axios
       return res.json({
+        success: false,
         token: token,
         user: newUser,
         message: "User succesfully signed up!",
       });
     } catch (err) {
-      return res.status(400).send({
-        message: err,
-        status: "failed",
+      return res.status(400).json({
+        message: err.message,
+        success: false,
       });
     }
   }
@@ -89,8 +90,8 @@ class UserController {
 
         // Makes sure the user provides their email/username and password
         if (!email && !username)
-          return res.send("Please enter your email address or username");
-        if (!password) return res.send("Please enter your password");
+          return res.json("Please enter your email address or username");
+        if (!password) return res.json("Please enter your password");
 
         // Makes sure a user isn't signing in with an email and username associated with a disabled user
         foundUser = await user.findWithDetails({
@@ -98,21 +99,22 @@ class UserController {
         });
 
         if (foundUser && email && foundUser.deleted === true)
-          return res.status(403).send({
+          return res.status(403).json({
             message: `This email is associated with a disabled account, please go to https://postit-r6r7.onrender.com/users/recover to sign in and reactivate your account`,
-            status: "failed",
+            success: false
           });
 
         if (foundUser && username && foundUser.deleted === true)
-          return res.status(403).send({
+          return res.status(403).json({
             message: `This username is associated with a disabled account, please go to https://postit-r6r7.onrender.com/users/recover to sign in and reactivate your account`,
-            status: "failed",
+            success: false
           });
 
         // Returns a message if user doesn't exist
         if (!foundUser || foundUser === null) {
-          return res.status(404).send({
+          return res.status(404).json({
             message: `User does not exist, would you like to sign up instead?`,
+            success: false
           });
         }
 
@@ -121,9 +123,9 @@ class UserController {
 
         // Sends a message if the input password doesn't match
         if (!isValid) {
-          return res.status(400).send({
+          return res.status(400).json({
             message: "Incorrect password, please retype your password",
-            status: "failed",
+            success: false
           });
         }
 
@@ -147,14 +149,15 @@ class UserController {
 
         // Sends the token to the client side for it to be set as the request header using axios
         return res.json({
+          success: true,
           token: token,
           user: foundUser,
           message: "User succesfully logged in!",
         });
       } catch (err) {
-        return res.status(400).send({
-          message: err,
-          status: "failed",
+        return res.status(400).json({
+          message: err.message,
+          success: false
         });
       }
     }
@@ -171,16 +174,16 @@ class UserController {
 
       // Sends a message if the specified user does not exist
       if (!existingUser) {
-        return res.status(404).send({
+        return res.status(404).json({
           success: false,
           message: "This user does not exist",
         });
       }
 
       if (reqUserId.toString() !== existingUser._id.toString())
-        return res.status(403).send({
-          message: "you are not authorised to update this user",
-          status: "failed",
+        return res.status(403).json({
+          message: "You are not authorised to update this user",
+          success: false
         });
 
       // Updates the user based on what was provided
@@ -191,19 +194,17 @@ class UserController {
       if (age) updatedUser = await user.update(id, { age: age });
       if (password) updatedUser = await user.update(id, { password: password });
 
-      updatedUser = await user.find(
-        { _id: updatedUser._id },
-        "-password -replies -postits -deleted"
-      );
+      updatedUser = await user.find({ _id: updatedUser._id }, "-password -replies -postits -deleted");
+
       // Sends a success message and displays the updated user
-      return res.status(200).send({
+      return res.status(200).json({
         success: true,
         message: "User updated successfully!",
         data: updatedUser,
       });
     } catch (err) {
       return res.send({
-        error: err,
+        success: false,
         message: err.message,
       });
     }
@@ -215,21 +216,18 @@ class UserController {
       const id = req.params.id;
       const reqUserId = req.user.id;
 
-      const existingUser = await user.find(
-        { _id: id, deleted: false },
-        "-password"
-      );
+      const existingUser = await user.find({ _id: id, deleted: false }, "-password");
 
       // Sends a message if the specified user does not exist
       if (!existingUser)
-        return res.status(404).send({
+        return res.status(404).json({
           success: false,
           message: "This user does not exist",
         });
 
       if (reqUserId.toString() !== existingUser._id.toString())
-        return res.status(403).send({
-          message: "you are not authorised to delete this user",
+        return res.status(403).json({
+          message: "Y?ou are not authorised to delete this user",
           status: "failed",
         });
 
@@ -244,14 +242,14 @@ class UserController {
       // await comment.updateMany({author: existingUser._id}, {deleted: true});
 
       // Sends a success message and displays the deleted user
-      return res.status(200).send({
+      return res.status(200).json({
         success: true,
         message: "User deleted successfully!",
         data: existingUser,
       });
     } catch (err) {
       return res.send({
-        error: err,
+        success: false,
         message: err.message,
       });
     }
@@ -261,27 +259,24 @@ class UserController {
   async getUser(req, res) {
     try {
       let id = req.params.id;
-      const existingUser = await user.find(
-        { _id: id, deleted: false },
-        "-password"
-      );
+      const existingUser = await user.find({ _id: id, deleted: false }, "-password");
 
       // Sends a message if the specified user does not exist
       if (!existingUser)
-        return res.status(404).send({
+        return res.status(404).json({
           success: false,
           message: "This user does not exist",
         });
 
       // Sends a success message and displays user
-      return res.status(200).send({
+      return res.status(200).json({
         success: true,
         message: "User fetched successfully!",
         data: existingUser,
       });
     } catch (err) {
-      return res.send({
-        error: err,
+      return res.json({
+        success: false,
         message: err.message,
       });
     }
@@ -294,20 +289,20 @@ class UserController {
 
       // Sends a message if no users exist
       if (!users)
-        return res.status(404).send({
+        return res.status(404).json({
           success: false,
           message: "There are no users on your database",
         });
 
       // Sends a success message and displays users
-      return res.status(200).send({
+      return res.status(200).json({
         success: true,
         message: "Users fetched successfully!",
         data: users,
       });
     } catch (err) {
-      return res.send({
-        error: err,
+      return res.json({
+        success: false,
         message: err.message,
       });
     }
@@ -317,27 +312,24 @@ class UserController {
   async getUserByHandle(req, res) {
     try {
       let handle = req.params.handle;
-      const existingUser = await user.find({
-        username: handle,
-        deleted: false,
-      });
+      const existingUser = await user.find({username: handle, deleted: false});
 
       // Sends a message if the specified user does not exist
       if (!existingUser)
-        return res.status(404).send({
+        return res.status(404).json({
           success: false,
           message: "This user does not exist",
         });
 
       // Sends a success message and displays user
-      return res.status(200).send({
+      return res.status(200).json({
         success: true,
         message: "User fetched successfully!",
         data: existingUser,
       });
     } catch (err) {
-      return res.send({
-        error: err,
+      return res.json({
+        success: false,
         message: err.message,
       });
     }

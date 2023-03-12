@@ -1,3 +1,4 @@
+// A list of avatar styles available on dicebear
 const avatarStyles = [
     'adventurer',
     'adventurer-neutral',
@@ -26,6 +27,7 @@ const avatarStyles = [
     'thumbs'
 ];
   
+// Generates a random number and uses it to pick a random avatar style from the avatar styles array
 const getRandomAvatarStyle = () => {
     const randomIndex = Math.floor(Math.random() * avatarStyles.length);
     const style = avatarStyles[randomIndex];
@@ -47,7 +49,6 @@ const generateRandomAvatar = async (email) => {
     const seed = _email.replace('@', replaceAt).replaceAll('.', replaceDot);
    
     const randomAvatarStyle = getRandomAvatarStyle();
-   
     if (!randomAvatarStyle || !avatarStyles.includes(randomAvatarStyle)) {
       // console.error('Invalid avatar style') // log this error to the console
       throw new Error('Something failed: ')

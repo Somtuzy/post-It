@@ -14,7 +14,8 @@ class CommentController{
             const existingUser = await user.find({_id: userId, deleted: false})
             const existingpostit = await postit.find({_id: postid, deleted: false})
             
-            if(!existingpostit) return res.status(404).send({
+            if(!existingpostit) return res.status(404).json({
+                success: false,
                 message: 'You cannot reply to this postit as it seems to have been deleted'
             })
 
@@ -25,11 +26,13 @@ class CommentController{
             await user.updateOne({_id: existingUser._id}, newComment._id)
 
             return res.status(200).send({
-                message: 'reply sent successfully!',
+                success: true,
+                message: 'Postit reply sent successfully!',
                 comment: newComment
             })
         } catch (err) {
-            return res.send({
+            return res.json({
+                success: false,
                 message: err.message
             })
         }
@@ -44,26 +47,31 @@ class CommentController{
 
             // Finds the comment
             const existingComment = await comment.find({_id: id, deleted: false})
-            if(!existingComment) return res.status(404).send({
+            if(!existingComment) return res.status(404).json({
+                success: false,
                 message: 'Comment not found'
             })
 
-            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).send({
+            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
+                success: false,
                 message: 'You are not authorised to edit this comment'
             })
 
-            if(!content) return res.status(403).send({
+            if(!content) return res.status(403).json({
+                success: false,
                 message: 'Please provide a content'
             })
 
             const updatedComment = await comment.update(id, {content: content})
 
-            return res.status(200).send({
+            return res.status(200).json({
+                success: true,
                 message: 'Comment updated',
                 post: updatedComment
             })
         } catch (err) {
-            return res.send({
+            return res.json({
+                success: false,
                 message: err.message
             })
         }
@@ -78,11 +86,13 @@ class CommentController{
             // Finds the comment
             const existingComment = await comment.find({_id: id, deleted: false})
             
-            if(!existingComment) return res.status(404).send({
+            if(!existingComment) return res.status(404).json({
+                success: false,
                 message: 'Comment not found'
             })
 
-            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).send({
+            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
+                success: false,
                 message: 'You are not authorised to delete this comment'
             })
 
@@ -91,14 +101,14 @@ class CommentController{
             await existingComment.save()
             
             // Sends a success message and displays the deleted comment
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Comment deleted successfully!',
                 data: existingComment
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         }  
@@ -112,7 +122,7 @@ class CommentController{
             const existingComment = await comment.find({_id: id, deleted: false})
 
             // Sends a message if the comment does not exist
-            if(!existingComment) return res.status(404).send({
+            if(!existingComment) return res.status(404).json({
                     success: false,
                     message: 'Comment does not exist'
                 })
@@ -124,8 +134,8 @@ class CommentController{
                 data: existingComment
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         }  
@@ -137,20 +147,20 @@ class CommentController{
             const comments = await comment.findAll({deleted: false})
 
             // Sends a message if no comments exist
-            if(!comments) return res.status(404).send({
+            if(!comments) return res.status(404).json({
                     success: false,
                     message: 'There are no comments on your database'
                 })
 
             // Sends a success message and displays comments
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Comments fetched successfully!',
                 data: comments
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         } 
@@ -163,20 +173,20 @@ class CommentController{
             const existingComment = await comment.find({_id: id, author: userid, postit: postid, deleted: false})
 
             // Sends a message if the comment does not exist
-            if(!existingComment) return res.status(404).send({
+            if(!existingComment) return res.status(404).json({
                     success: false,
                     message: 'This comment does not exist'
                 })
 
             // Sends a success message and displays comment
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Comment fetched successfully!',
                 data: existingPost
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         }  
@@ -189,20 +199,20 @@ class CommentController{
             const comments = await comment.findAll({author: userid, postit: postid, deleted: false})
 
             // Sends a message if no comments exist
-            if(!comments) return res.status(404).send({
+            if(!comments) return res.status(404).json({
                     success: false,
                     message: 'This user has no comments'
                 })
 
             // Sends a success message and displays comments
-            return res.status(200).send({
+            return res.status(200).json({
                 success: true,
                 message: 'Comments fetched successfully!',
                 data: comments
             })
         } catch (err) {
-            return res.send({
-                error: err,
+            return res.json({
+                success: false,
                 message: err.message
             })
         } 
