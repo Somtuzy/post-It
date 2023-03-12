@@ -15,6 +15,17 @@ class RecoverController{
             // Makes sure a user isn't signing in with an email and username associated with a disabled user
             foundUser = await user.findWithDetails({ $or: [{ username: username }, { email: email }] })
 
+            // Checks if the password input by the client matches the protected password of the returned user
+            const isValid = await verifyPassword(password, foundUser.password)
+    
+            // Sends a message if the input password doesn't match
+            if(!isValid){
+                return res.status(400).json({
+                    message: `Incorrect password, please retype your password`,
+                    success: false
+                })
+            }
+
             if(foundUser && username && foundUser.deleted === false) return res.status(403).json({
                 message: `This username belongs to an active user, please sign in instead`,
                 success: false
@@ -24,7 +35,7 @@ class RecoverController{
                 message: `This email belongs to an active user, please sign in instead`,
                 success: false
             })
-            
+
             if(foundUser && email && foundUser.deleted === true) {
                 foundUser.deleted = false
                 await foundUser.save()
@@ -42,17 +53,6 @@ class RecoverController{
                         success: false
                     })
                 }
-    
-            // Checks if the password input by the client matches the protected password of the returned user
-            const isValid = await verifyPassword(password, foundUser.password)
-    
-            // Sends a message if the input password doesn't match
-            if(!isValid){
-                return res.status(400).json({
-                    message: `Incorrect password, please retype your password`,
-                    success: false
-                })
-            }
     
             // Stores the returned user's unique id in an object to generate a token for the user 
             const token = generateToken({id: foundUser._id})
