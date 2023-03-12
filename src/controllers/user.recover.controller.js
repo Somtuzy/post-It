@@ -15,16 +15,6 @@ class RecoverController{
             // Makes sure a user isn't signing in with an email and username associated with a disabled user
             foundUser = await user.findWithDetails({ $or: [{ username: username }, { email: email }] })
 
-            if(foundUser && email && foundUser.deleted === true) {
-                foundUser.deleted = false
-                await foundUser.save()
-            }
-        
-            if(foundUser && username && foundUser.deleted === true) {
-                foundUser.deleted = false
-                await foundUser.save()
-            }
-
             if(foundUser && username && foundUser.deleted === false) return res.status(403).json({
                 message: `This username belongs to an active user, please sign in instead`,
                 success: false
@@ -34,6 +24,16 @@ class RecoverController{
                 message: `This email belongs to an active user, please sign in instead`,
                 success: false
             })
+            
+            if(foundUser && email && foundUser.deleted === true) {
+                foundUser.deleted = false
+                await foundUser.save()
+            }
+        
+            if(foundUser && username && foundUser.deleted === true) {
+                foundUser.deleted = false
+                await foundUser.save()
+            }
                 
             // Returns a message if user doesn't exist
             if(!foundUser || foundUser === null){
