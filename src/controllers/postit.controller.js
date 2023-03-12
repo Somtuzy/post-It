@@ -19,14 +19,14 @@ class PostitController{
             newPost = await postit.find({_id: newPost._id})
 
             return res.status(200).json({
+                message: `Your postit has been sent successfully!`,
                 success: true,
-                message: 'Postit created successfully!',
-                post: newPost
+                data: newPost
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }
     }
@@ -40,32 +40,33 @@ class PostitController{
 
             // Finds the post
             const existingPost = await postit.find({_id: id})
-            if(!existingPost) return res.status(404).json({
-                success: false,
-                message: 'Postit not found!'
-            })
 
             if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
                 success: false,
-                message: 'You are not authorised to edit this post'
+                message: `You cannot edit this postit because you're not the author`
+            })
+
+            if(!existingPost) return res.status(404).json({
+                message: `Oops, we couldn't find this postit as it does not exist or may have already been deleted by you!`,
+                success: false
             })
 
             if (!content) return res.status(403).json({
-                success: false,
-                message: 'Postit field cannot be empty'
+                message: `Please write your postit`,
+                success: false
             })
             
             const updatedPost = await postit.update(id, {content: content})
 
             return res.status(200).json({
+                message: `Your postit has been updated successfully!`,
                 success: true,
-                message: 'Post updated',
-                post: updatedPost
+                data: updatedPost
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }
     }
@@ -78,14 +79,15 @@ class PostitController{
 
             // Finds the postit
             const existingPost = await postit.find({_id: id})
-            if(!existingPost) return res.status(404).json({
-                success: false,
-                message: 'Postit was not found'
-            })
 
             if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
-                success: false,
-                message: 'You are not authorised to delete this postit'
+                message: `You cannot delete this postit because you're not the author`,
+                success: false
+            })
+
+            if(!existingPost) return res.status(404).json({
+                message: `Oops, we couldn't find this postit as it does not exist or may have already been deleted by you!`,
+                success: false
             })
 
             // Deletes the postit
@@ -94,14 +96,14 @@ class PostitController{
             
             // Sends a success message and displays the deleted postit
             return res.status(200).json({
+                message: `Your postit was deleted successfully!`,
                 success: true,
-                message: 'Postit deleted successfully!',
                 data: existingPost
             })
         } catch (err) {
             return res.send({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }  
     }
@@ -114,20 +116,20 @@ class PostitController{
 
             // Sends a message if the specified postit does not exist
             if(!existingPost) return res.status(404).json({
-                    success: false,
-                    message: 'This postit does not exist'
+                    message: `Oops, we couldn't find this postit as it does not exist or may have been deleted by its author!`,
+                    success: false
                 })
 
             // Sends a success message and displays postit
             return res.status(200).json({
+                message: `Postit fetched successfully!`,
                 success: true,
-                message: 'Postit fetched successfully!',
                 data: existingPost
             })
         } catch (err) {
             return res.send({
-                error: err,
-                message: err.message
+                message: err.message,
+                success: false,
             })
         }  
     }
@@ -139,20 +141,20 @@ class PostitController{
 
             // Sends a message if no postits exist
             if(!postits) return res.status(404).json({
-                    success: false,
-                    message: 'There are no postits on your database'
+                    message: `Oops, there are no postits to display yet!`,
+                    success: false
                 })
 
             // Sends a success message and displays postits
             return res.status(200).json({
+                message: `Postits fetched successfully!`,
                 success: true,
-                message: 'Postits fetched successfully!',
                 data: postits
             })
         } catch (err) {
             return res.send({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         } 
     }
@@ -165,20 +167,20 @@ class PostitController{
 
             // Sends a message if no postits exist
             if(!postits) return res.status(404).json({
-                    success: false,
-                    message: 'This user has no postits'
+                    message: `Oops, it seems like this user has no postits to display`,
+                    success: false
                 })
 
             // Sends a success message and displays postits
             return res.status(200).json({
+                message: `Postits fetched successfully!`,
                 success: true,
-                message: 'Postits fetched successfully!',
                 data: postits
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         } 
     }
@@ -191,20 +193,20 @@ class PostitController{
 
             // Sends a message if the specified postit does not exist
             if(!existingPost) return res.status(404).json({
-                    success: false,
-                    message: 'This postit does not exist'
-                })
+                    message: `Oops, we couldn't find this postit as it does not exist or may have been deleted by its author!`,
+                    success: false
+            })
 
             // Sends a success message and displays postit
             return res.status(200).json({
+                message: `Postit fetched successfully!`,
                 success: true,
-                message: 'Postit fetched successfully!',
                 data: existingPost
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }  
     }
@@ -219,20 +221,20 @@ class PostitController{
 
             // Sends a message if the specified postit does not exist
             if(!existingPosts) return res.status(404).json({
-                    success: false,
-                    message: 'This postit does not exist'
+                    message: `Oops, it seems like this user has no postits to display`,
+                    success: false
                 })
 
             // Sends a success message and displays postit
             return res.status(200).json({
+                message: `Postits fetched successfully!`,
                 success: true,
-                message: 'Postits fetched successfully!',
                 data: existingPosts
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }  
     }

@@ -17,7 +17,7 @@ class UserController {
       if (existingUser && existingUser.username === username) {
         // Gives forbidden message
         return res.status(403).json({
-          message: "User already exists with this username",
+          message: `Oops, it seems like a user already exists with this username. Try a different username or sign in if you're the one registered with this username`,
           success: false
         });
       }
@@ -25,7 +25,7 @@ class UserController {
       if (existingUser && existingUser.email === email) {
         // Gives forbidden message
         return res.status(403).json({
-          message: "User already exists with this email",
+          message: `Oops, it seems like a user already exists with this email. Try a different email or sign in if you're the one registered with this email`,
           success: false,
         });
       }
@@ -69,10 +69,10 @@ class UserController {
 
       // Sends the token to the client side for it to be set as the request header using axios
       return res.json({
-        success: false,
+        message: `User successfully signed up!`,
+        success: true,
         token: token,
-        user: newUser,
-        message: "User successfully signed up!",
+        user: newUser
       });
     } catch (err) {
       return res.status(400).json({
@@ -90,8 +90,8 @@ class UserController {
 
         // Makes sure the user provides their email/username and password
         if (!email && !username)
-          return res.json("Please enter your email address or username");
-        if (!password) return res.json("Please enter your password");
+          return res.json(`Please enter your email address or username to continue`);
+        if (!password) return res.json(`Please enter your password to continue`);
 
         // Makes sure a user isn't signing in with an email and username associated with a disabled user
         foundUser = await user.findWithDetails({
@@ -100,13 +100,13 @@ class UserController {
 
         if (foundUser && email && foundUser.deleted === true)
           return res.status(403).json({
-            message: `This email is associated with a disabled account, please go to https://postit-r6r7.onrender.com/users/recover to sign in and reactivate your account`,
+            message: `This email is associated with a disabled account, please visit https://postit-1rn8.onrender.com/users/recover to reactivate your account`,
             success: false
           });
 
         if (foundUser && username && foundUser.deleted === true)
           return res.status(403).json({
-            message: `This username is associated with a disabled account, please go to https://postit-r6r7.onrender.com/users/recover to sign in and reactivate your account`,
+            message: `This username is associated with a disabled account, please visit https://postit-1rn8.onrender.com/users/recover to reactivate your account`,
             success: false
           });
 
@@ -124,7 +124,7 @@ class UserController {
         // Sends a message if the input password doesn't match
         if (!isValid) {
           return res.status(400).json({
-            message: "Incorrect password, please retype your password",
+            message: `Incorrect password, please retype your password`,
             success: false
           });
         }
@@ -152,7 +152,7 @@ class UserController {
           success: true,
           token: token,
           user: foundUser,
-          message: "User succesfully logged in!",
+          message: `User succesfully logged in!`,
         });
       } catch (err) {
         return res.status(400).json({
@@ -176,13 +176,13 @@ class UserController {
       if (!existingUser) {
         return res.status(404).json({
           success: false,
-          message: "This user does not exist",
+          message: `This user does not exist`,
         });
       }
 
       if (reqUserId.toString() !== existingUser._id.toString())
         return res.status(403).json({
-          message: "You are not authorised to update this user",
+          message: `You cannot update this user`,
           success: false
         });
 
@@ -198,14 +198,14 @@ class UserController {
 
       // Sends a success message and displays the updated user
       return res.status(200).json({
+        message: `User updated successfully!`,
         success: true,
-        message: "User updated successfully!",
         data: updatedUser,
       });
     } catch (err) {
       return res.send({
-        success: false,
         message: err.message,
+        success: false
       });
     }
   }
@@ -221,14 +221,14 @@ class UserController {
       // Sends a message if the specified user does not exist
       if (!existingUser)
         return res.status(404).json({
-          success: false,
-          message: "This user does not exist",
+          message: `This user does not exist`,
+          success: false
         });
 
       if (reqUserId.toString() !== existingUser._id.toString())
         return res.status(403).json({
-          message: "Y?ou are not authorised to delete this user",
-          status: "failed",
+          message: `You cannot delete this user`,
+          success: false,
         });
 
       // This soft deletes a user
@@ -243,14 +243,14 @@ class UserController {
 
       // Sends a success message and displays the deleted user
       return res.status(200).json({
+        message: `User deleted successfully!`,
         success: true,
-        message: "User deleted successfully!",
         data: existingUser,
       });
     } catch (err) {
       return res.send({
-        success: false,
         message: err.message,
+        success: false
       });
     }
   }
@@ -264,20 +264,20 @@ class UserController {
       // Sends a message if the specified user does not exist
       if (!existingUser)
         return res.status(404).json({
-          success: false,
-          message: "This user does not exist",
+          message: `This user does not exist`,
+          success: false
         });
 
       // Sends a success message and displays user
       return res.status(200).json({
+        message: `User fetched successfully!`,
         success: true,
-        message: "User fetched successfully!",
         data: existingUser,
       });
     } catch (err) {
       return res.json({
-        success: false,
         message: err.message,
+        success: false
       });
     }
   }
@@ -290,20 +290,20 @@ class UserController {
       // Sends a message if no users exist
       if (!users)
         return res.status(404).json({
+          message: `Oops, it seems like there are no users yet`,
           success: false,
-          message: "There are no users on your database",
         });
 
       // Sends a success message and displays users
       return res.status(200).json({
+        message: `Users fetched successfully!`,
         success: true,
-        message: "Users fetched successfully!",
         data: users,
       });
     } catch (err) {
       return res.json({
-        success: false,
         message: err.message,
+        success: false
       });
     }
   }
@@ -317,20 +317,20 @@ class UserController {
       // Sends a message if the specified user does not exist
       if (!existingUser)
         return res.status(404).json({
-          success: false,
-          message: "This user does not exist",
+          message: `This user does not exist`,
+          success: false
         });
 
       // Sends a success message and displays user
       return res.status(200).json({
+        message: `User fetched successfully!`,
         success: true,
-        message: "User fetched successfully!",
         data: existingUser,
       });
     } catch (err) {
       return res.json({
-        success: false,
         message: err.message,
+        success: false
       });
     }
   }
