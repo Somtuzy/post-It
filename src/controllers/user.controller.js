@@ -26,7 +26,7 @@ class UserController {
         // Gives forbidden message
         return res.status(403).json({
           message: "User already exists with this email",
-          status: "failed",
+          success: false,
         });
       }
 
@@ -61,9 +61,9 @@ class UserController {
 
       newUser = await user.find({
         $and: [
-          { _id: newUser._id },
-          { username: newUser.username },
-          { email: newUser.email },
+          {_id: newUser._id},
+          {username: newUser.username},
+          {email: newUser.email},
         ],
       });
 
@@ -72,7 +72,7 @@ class UserController {
         success: false,
         token: token,
         user: newUser,
-        message: "User succesfully signed up!",
+        message: "User successfully signed up!",
       });
     } catch (err) {
       return res.status(400).json({
