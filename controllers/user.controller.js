@@ -99,13 +99,13 @@ class UserController {
 
         if (foundUser && email && foundUser.deleted === true)
           return res.status(403).send({
-            message: `This email is associated with a disabled account, please go to https://postit.onrender.com/users/recover to sign in and reactivate your account`,
+            message: `This email is associated with a disabled account, please go to https://postit-r6r7.onrender.com/users/recover to sign in and reactivate your account`,
             status: "failed",
           });
 
         if (foundUser && username && foundUser.deleted === true)
           return res.status(403).send({
-            message: `This username is associated with a disabled account, please go to https://postit.onrender.com/users/recover to sign in and reactivate your account`,
+            message: `This username is associated with a disabled account, please go to https://postit-r6r7.onrender.com/users/recover to sign in and reactivate your account`,
             status: "failed",
           });
 
