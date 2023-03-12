@@ -28,7 +28,7 @@ app.get('api/v1/health', (req, res) => {
 const port = parseFloat(PORT) || 3000
 
 // Server listening for requests
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   connect(Uri)
   console.log(`Server connected on port ${port}`)
 })
