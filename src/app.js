@@ -20,7 +20,7 @@ app.use(cookieParser())
 app.use('/api', router)
 
 // Define a health check route that responds with a 200 status code
-app.get('api/v1/health', (req, res) => {
+app.get('/api/v1/health', (req, res) => {
   res.status(200).json('Relax, brov. Everything is alright..');
 });
 
