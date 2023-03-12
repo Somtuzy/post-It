@@ -119,7 +119,7 @@ class UserController {
         }
 
         // Checks if the password input by the client matches the protected password of the returned user
-        const isValid = verifyPassword(password, foundUser.password);
+        const isValid = await verifyPassword(password, foundUser.password);
 
         // Sends a message if the input password doesn't match
         if (!isValid) {

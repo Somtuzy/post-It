@@ -24,6 +24,16 @@ class RecoverController{
                 foundUser.deleted = false
                 await foundUser.save()
             }
+
+            if(foundUser && username && foundUser.deleted === false) return res.status(403).json({
+                message: `This username belongs to an active user, please sign in instead`,
+                success: false
+            })
+
+            if(foundUser && email && foundUser.deleted === false) return res.status(403).json({
+                message: `This email belongs to an active user, please sign in instead`,
+                success: false
+            })
                 
             // Returns a message if user doesn't exist
             if(!foundUser || foundUser === null){
@@ -34,7 +44,7 @@ class RecoverController{
                 }
     
             // Checks if the password input by the client matches the protected password of the returned user
-            const isValid = verifyPassword(password, foundUser.password)
+            const isValid = await verifyPassword(password, foundUser.password)
     
             // Sends a message if the input password doesn't match
             if(!isValid){
