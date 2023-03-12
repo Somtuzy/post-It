@@ -89,11 +89,10 @@ class UserController {
         let foundUser;
 
         // Makes sure the user provides their email/username and password
-        if (!email && !username)
-          return res.json(`Please enter your email address or username to continue`);
-        if (!password) return res.json(`Please enter your password to continue`);
         if (!email && !username && !password) return res.json(`Fields cannot be empty`);
-
+        if (!email && !username) return res.json(`Please enter your email address or username to continue`);
+        if (!password) return res.json(`Please enter your password to continue`);
+        
         // Makes sure a user isn't signing in with an email and username associated with a disabled user
         foundUser = await user.findWithDetails({
           $or: [{ username: username }, { email: email }],
