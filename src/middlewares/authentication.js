@@ -14,8 +14,9 @@ const authenticate = async (req, res, next) => {
         }
 
         // Checks if a token exists and returns a message if none was found
-        if (!token) return res.status(400).send({
-            message: 'You must be signed in to view content'
+        if (!token) return res.status(400).json({
+            message: 'You must be signed in to view content',
+            success: false
         })
 
         // Decode the user token referenced in the request header?cookie to verify its authenticity by checking the token against the secret key. If the token is valid, we should get the user credentials associated with that token.
@@ -23,9 +24,9 @@ const authenticate = async (req, res, next) => {
 
         // If secret key doesn't recognise the token, the user isn't authenticated and asked to try signing in again to get a new token
         if (!payload) {
-            return res.status(403).send({
+            return res.status(400).json({
                 message: 'User authentication failed, please try signing in again',
-                status: 'failed'
+                success: false
             })
         }
 
@@ -34,22 +35,23 @@ const authenticate = async (req, res, next) => {
 
         // If no user is found with the payload (credentials), authentication fails.
         if (!validUser) {
-            return res.status(400).send({
+            return res.status(400).json({
                 message: 'User not found',
-                status: 'failed'
+                success: false
             });
         }
 
         // If the user exists on the database, they're authentic users and are granted access to protected content
-        console.log(validUser.username + " is successfully authenticated");
+        console.log(`Authentication for ${validUser.username} successful`);
 
         // The user is then added to the request so all their requests will be associated with their credentials.
         req.user = validUser;
+
         next();
     } catch (err) {
-        return res.status(400).send({
-            message: err,
-            status: 'failed'
+        return res.status(400).json({
+            message: err.message,
+            success: false
         })
     }
 }

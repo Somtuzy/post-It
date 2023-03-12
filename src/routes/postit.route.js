@@ -23,7 +23,6 @@ router.route('/postits/:id')
 .get(authenticate, getPost)
 .delete(authenticate, deletePost)
 
-
 router.route('/users/@:handle/postits')
 .get(authenticate, getUserPostsByHandle)
 

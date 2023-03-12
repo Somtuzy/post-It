@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 require('dotenv').config()
-const rounds = parseFloat(process.env.ROUNDS)
+const rounds = parseFloat(process.env.ROUNDS) || Math.floor(Math.random() * 5)
 
 const hashPassword = async (passwordInput) => {
     return await bcrypt.hash(passwordInput, rounds)
