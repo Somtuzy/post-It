@@ -15,6 +15,14 @@ class RecoverController{
             // Makes sure a user isn't signing in with an email and username associated with a disabled user
             foundUser = await user.findWithDetails({ $or: [{ username: username }, { email: email }] })
 
+            // Returns a message if user doesn't exist
+            if(!foundUser || foundUser === null){
+                return res.status(400).json({
+                    message: `User does not exist, would you like to sign up instead?`,
+                    success: false
+                })
+            }
+
             // Checks if the password input by the client matches the protected password of the returned user
             const isValid = await verifyPassword(password, foundUser.password)
     
@@ -45,14 +53,6 @@ class RecoverController{
                 foundUser.deleted = false
                 await foundUser.save()
             }
-                
-            // Returns a message if user doesn't exist
-            if(!foundUser || foundUser === null){
-                    return res.status(400).json({
-                        message: `User does not exist, would you like to sign up instead?`,
-                        success: false
-                    })
-                }
     
             // Stores the returned user's unique id in an object to generate a token for the user 
             const token = generateToken({id: foundUser._id})

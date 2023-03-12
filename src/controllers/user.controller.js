@@ -98,18 +98,6 @@ class UserController {
           $or: [{ username: username }, { email: email }],
         });
 
-        if (foundUser && email && foundUser.deleted === true)
-          return res.status(403).json({
-            message: `This email is associated with a disabled account, please visit https://postit-1rn8.onrender.com/users/recover to reactivate your account`,
-            success: false
-          });
-
-        if (foundUser && username && foundUser.deleted === true)
-          return res.status(403).json({
-            message: `This username is associated with a disabled account, please visit https://postit-1rn8.onrender.com/users/recover to reactivate your account`,
-            success: false
-          });
-
         // Returns a message if user doesn't exist
         if (!foundUser || foundUser === null) {
           return res.status(404).json({
@@ -128,6 +116,18 @@ class UserController {
             success: false
           });
         }
+
+        if (foundUser && email && foundUser.deleted === true)
+          return res.status(403).json({
+            message: `This email is associated with a disabled account, please visit https://postit-1rn8.onrender.com/users/recover to reactivate your account`,
+            success: false
+          });
+
+        if (foundUser && username && foundUser.deleted === true)
+          return res.status(403).json({
+            message: `This username is associated with a disabled account, please visit https://postit-1rn8.onrender.com/users/recover to reactivate your account`,
+            success: false
+          });
 
         // Stores the returned user's unique id in an object to generate a token for the user
         const token = generateToken({ id: foundUser._id });
