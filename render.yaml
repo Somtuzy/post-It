@@ -1,0 +1,8 @@
+services:
+  - name: postit
+    env:
+      JWT_EXPIRES_IN: {{ env.JWT_EXPIRES_IN }}
+      JWT_SECRET_KEY: {{ env.JWT_SECRET_KEY }}
+      MONGODB_URI: {{ env.MONGODB_URI }}
+      ROUNDS: {{ env.ROUNDS }}
+      PORT: {{ env.PORT }}
