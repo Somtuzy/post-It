@@ -10,30 +10,35 @@ class CommentController{
             const userId = req.user.id
             const { postid } = req.params
 
-            // Finds the user making the comment
-            const existingUser = await user.find({_id: userId, deleted: false})
-            const existingpostit = await postit.find({_id: postid, deleted: false})
-            
-            if(!existingpostit) return res.status(404).json({
-                success: false,
-                message: 'You cannot reply to this postit as it seems to have been deleted'
+            if(!content) return res.status(404).json({
+                message: `Please write your comment`,
+                success: false
             })
 
-            const newComment = await comment.create({author: existingUser._id, content, postit: existingpostit._id})
+            // Finds the user making the comment
+            const existingUser = await user.find({_id: userId, deleted: false})
+            const existingPostit = await postit.find({_id: postid, deleted: false})
+            
+            if(!existingPostit) return res.status(404).json({
+                message: `Oops, we couldn't find the postit you're trying to reply to as it does not exist or may have been deleted by its author!`,
+                success: false
+            })
+
+            const newComment = await comment.create({author: existingUser._id, content, postit: existingPostit._id})
             await newComment.save()
 
-            await postit.updateOne({_id: existingpostit._id}, newComment._id)
+            await postit.updateOne({_id: existingPostit._id}, newComment._id)
             await user.updateOne({_id: existingUser._id}, newComment._id)
 
-            return res.status(200).send({
+            return res.status(200).json({
+                message: `Your comment has been sent successfully!`,
                 success: true,
-                message: 'Postit reply sent successfully!',
-                comment: newComment
+                data: newComment
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }
     }
@@ -45,34 +50,34 @@ class CommentController{
             const { content } = req.body
             const userId = req.user.id
 
+            if(!content) return res.status(403).json({
+                message: `Please write your comment`,
+                success: false
+            })
+
             // Finds the comment
             const existingComment = await comment.find({_id: id, deleted: false})
-            if(!existingComment) return res.status(404).json({
-                success: false,
-                message: 'Comment not found'
-            })
-
             if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
-                success: false,
-                message: 'You are not authorised to edit this comment'
+                message: `You cannot edit this comment because you're not the author!`,
+                success: false
             })
 
-            if(!content) return res.status(403).json({
-                success: false,
-                message: 'Please provide a content'
+            if(!existingComment) return res.status(404).json({
+                message: `Oops, we couldn't find your comment as it does not exist or may have already been deleted by you!`,
+                success: false
             })
 
             const updatedComment = await comment.update(id, {content: content})
 
             return res.status(200).json({
+                message: `Your comment was updated successfully!`,
                 success: true,
-                message: 'Comment updated',
-                post: updatedComment
+                data: updatedComment
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }
     }
@@ -85,31 +90,30 @@ class CommentController{
             
             // Finds the comment
             const existingComment = await comment.find({_id: id, deleted: false})
-            
-            if(!existingComment) return res.status(404).json({
-                success: false,
-                message: 'Comment not found'
-            })
-
             if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
-                success: false,
-                message: 'You cannot delete this comment'
+                message: `You cannot delete this comment because you're not the author`,
+                success: false
             })
 
-            // Deletes the user
+            if(!existingComment) return res.status(404).json({
+                message: `Oops, we couldn't find your comment as it does not exist or may have already been deleted by you!`,
+                success: false
+            })
+
+            // Deletes the comment
             existingComment.deleted = true;
             await existingComment.save()
             
             // Sends a success message and displays the deleted comment
             return res.status(200).json({
+                message: `Your comment was deleted successfully!`,
                 success: true,
-                message: 'Comment deleted successfully!',
                 data: existingComment
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }  
     }
@@ -123,20 +127,20 @@ class CommentController{
 
             // Sends a message if the comment does not exist
             if(!existingComment) return res.status(404).json({
-                    success: false,
-                    message: 'Comment does not exist'
+                    message: `Oops, we couldn't find this comment as it does not exist or may have been deleted by its author`,
+                    success: false
                 })
 
             // Sends a success message and displays comment
             return res.status(200).send({
+                message: `Comment fetched successfully!`,
                 success: true,
-                message: 'Comment fetched successfully!',
                 data: existingComment
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }  
     }
@@ -148,20 +152,20 @@ class CommentController{
 
             // Sends a message if no comments exist
             if(!comments) return res.status(404).json({
-                    success: false,
-                    message: 'There are no comments on your database'
+                    message: `Oops, there are no comments to display yet`,
+                    success: false
                 })
 
             // Sends a success message and displays comments
             return res.status(200).json({
+                message: `All comments fetched successfully!`,
                 success: true,
-                message: 'Comments fetched successfully!',
                 data: comments
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         } 
     }
@@ -174,20 +178,20 @@ class CommentController{
 
             // Sends a message if the comment does not exist
             if(!existingComment) return res.status(404).json({
-                    success: false,
-                    message: 'This comment does not exist'
+                    message: `Oops, we couldn't find this comment as it does not exist or may have been deleted by its author`,
+                    success: false
                 })
 
             // Sends a success message and displays comment
             return res.status(200).json({
+                message: `Comment fetched successfully!`,
                 success: true,
-                message: 'Comment fetched successfully!',
-                data: existingPost
+                data: existingComment
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         }  
     }
@@ -200,20 +204,20 @@ class CommentController{
 
             // Sends a message if no comments exist
             if(!comments) return res.status(404).json({
-                    success: false,
-                    message: 'This user has no comments'
+                    message: `Oops, it seems like this user has no comments`,
+                    success: false
                 })
 
             // Sends a success message and displays comments
             return res.status(200).json({
+                message: `Comments fetched successfully!`,
                 success: true,
-                message: 'Comments fetched successfully!',
                 data: comments
             })
         } catch (err) {
             return res.json({
-                success: false,
-                message: err.message
+                message: err.message,
+                success: false
             })
         } 
     }
