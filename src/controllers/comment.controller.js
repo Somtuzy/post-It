@@ -168,8 +168,10 @@ class CommentController{
     // Getting a user's comment by id
     async getUserCommentById(req, res) {
         try {
-            let { userid, postid, id } = req.params
-            const existingComment = await comment.find({_id: id, author: userid, postit: postid, deleted: false})
+            const { userid, postid, id } = req.params
+            const author = await user.find({_id: userid})
+            const postit = await postit.find({_id: postid})
+            const existingComment = await comment.find({_id: id, author: author._id, postit: postit._id, deleted: false})
 
             // Sends a message if the comment does not exist
             if(!existingComment) return res.status(404).json({
@@ -195,7 +197,9 @@ class CommentController{
     async getUserComments(req, res) {
         try {
             const { userid, postid } = req.params
-            const comments = await comment.findAll({author: userid, postit: postid, deleted: false})
+            const author = await user.find({_id: userid})
+            const postit = await postit.find({_id: postid})
+            const comments = await comment.findAll({author: author._id, postit: postit._id, deleted: false})
 
             // Sends a message if no comments exist
             if(!comments) return res.status(404).json({
