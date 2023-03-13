@@ -116,8 +116,7 @@ class CommentController{
     // Getting one comment by id
     async getComment(req, res) {
         try {
-            let { id } = req.params
-    
+            const { id } = req.params
             const existingComment = await comment.find({_id: id, deleted: false})
 
             // Sends a message if the comment does not exist
@@ -169,9 +168,7 @@ class CommentController{
     async getUserCommentById(req, res) {
         try {
             const { userid, postid, id } = req.params
-            const author = await user.find({_id: userid})
-            const postit = await postit.find({_id: postid})
-            const existingComment = await comment.find({_id: id, author: author._id, postit: postit._id, deleted: false})
+            const existingComment = await comment.find({_id: id, author: userid, postit: postid, deleted: false})
 
             // Sends a message if the comment does not exist
             if(!existingComment) return res.status(404).json({
