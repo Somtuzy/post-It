@@ -14,7 +14,7 @@ router.use('/v1', commentRouter)
 
 // Redirects to API documentation
 router.use('/v1/docs', (req, res) => {
-    res.redirect(docsUrl)
+    res.redirect(301, docsUrl)
 })
 
 module.exports = router;
