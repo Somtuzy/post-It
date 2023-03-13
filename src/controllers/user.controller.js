@@ -32,7 +32,7 @@ class UserController {
 
       // Generates a random avatar for the user
       const avatarUrl = await generateRandomAvatar(email);
-      const avatar = `<img src="${avatarUrl} alt="An avatar used to represent ${username} generated with their personal email.">`;
+      const avatar = `<img src="${avatarUrl}" alt="An avatar used to represent ${username} generated with their personal email.">`;
 
       // Hashes the user password for extra protection
       const safePassword = await hashPassword(password);
