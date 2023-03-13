@@ -17,7 +17,7 @@ class UserController {
       if (existingUser && existingUser.username === username) {
         // Gives forbidden message
         return res.status(403).json({
-          message: `Oops, it seems like a user already exists with this username. Try a different username or sign in if you're the one registered with this username`,
+          message: `Oops, it seems like this username is taken. Try a different username or sign in if you're the one registered with this username`,
           success: false
         });
       }
@@ -25,7 +25,7 @@ class UserController {
       if (existingUser && existingUser.email === email) {
         // Gives forbidden message
         return res.status(403).json({
-          message: `Oops, it seems like a user already exists with this email. Try a different email or sign in if you're the one registered with this email`,
+          message: `Oops, it seems like this email is taken. Try a different email or sign in if you're the one registered with this email`,
           success: false,
         });
       }

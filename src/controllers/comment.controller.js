@@ -168,6 +168,14 @@ class CommentController{
     async getUserCommentById(req, res) {
         try {
             const { userid, postid, id } = req.params
+            const existingUser = await user.find({_id: userid})
+            const existingPost = await postit.find({_id: postid})
+
+            if(!existingPost && !existingUser) return res.status(404).json({
+                message: `Oops, it seems like you're trying to fetch a resource that doesn't exist`,
+                success: false
+            })
+
             const existingComment = await comment.find({_id: id, author: userid, postit: postid, deleted: false})
 
             // Sends a message if the comment does not exist
@@ -194,6 +202,14 @@ class CommentController{
     async getUserComments(req, res) {
         try {
             const { userid, postid } = req.params
+            const existingPost = await postit.find({_id: postid})
+            const existingUser = await user.find({_id: userid})
+            
+            if(!existingPost && !existingUser) return res.status(404).json({
+                message: `Oops, it seems like you're trying to fetch a resource that doesn't exist`,
+                success: false
+            })
+
             const comments = await comment.findAll({author: userid, postit: postid, deleted: false})
 
             // Sends a message if no comments exist

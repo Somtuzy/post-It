@@ -169,6 +169,13 @@ class PostitController{
     async getUserPosts(req, res) {
         try {
             const { userid } = req.params
+            const existingUser = await user.find({_id: userid})
+
+            if(!existingUser) return res.status(404).json({
+                message: `Oops, it seems like you're trying to fetch a resource that doesn't exist`,
+                success: false
+            })
+
             const postits = await postit.findAll({author: userid, deleted: false})
 
             // Sends a message if no postits exist
@@ -195,6 +202,13 @@ class PostitController{
     async getUserPostById(req, res) {
         try {
             const { userid, id } = req.params
+            const existingUser = await user.find({_id: userid})
+            
+            if(!existingUser) return res.status(404).json({
+                message: `Oops, it seems like you're trying to fetch a resource that doesn't exist`,
+                success: false
+            })
+
             const existingPost = await postit.find({_id: id, author: userid, deleted: false})
 
             // Sends a message if the specified postit does not exist
