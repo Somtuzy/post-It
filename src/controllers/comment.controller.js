@@ -194,9 +194,7 @@ class CommentController{
     async getUserComments(req, res) {
         try {
             const { userid, postid } = req.params
-            const author = await user.find({_id: userid})
-            const postit = await postit.find({_id: postid})
-            const comments = await comment.findAll({author: author._id, postit: postit._id, deleted: false})
+            const comments = await comment.findAll({author: userid, postit: postid, deleted: false})
 
             // Sends a message if no comments exist
             if(!comments) return res.status(404).json({
