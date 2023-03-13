@@ -28,4 +28,4 @@ Postit is a social media app where users can share and exchange thoughts in text
  • [Postit Data Modelling](https://dbdesigner.page.link/5FAaVLnsH7uB8ned7)
 
 
-### Soft deleted postits were stored on the database for security reasons and to keep track of all past user interactions in accordance with privacy laws for future references.
+ Soft deleted postits were stored on the database for security reasons and to keep track of all past user interactions in accordance with privacy laws for future references.
