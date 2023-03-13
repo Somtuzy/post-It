@@ -10,11 +10,6 @@ class CommentController{
             const userId = req.user.id
             const { postid } = req.params
 
-            if(!content) return res.status(404).json({
-                message: `Please write your comment`,
-                success: false
-            })
-
             // Finds the user making the comment
             const existingUser = await user.find({_id: userId, deleted: false})
             const existingPostit = await postit.find({_id: postid, deleted: false})
@@ -57,13 +52,13 @@ class CommentController{
 
             // Finds the comment
             const existingComment = await comment.find({_id: id, deleted: false})
-            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
-                message: `You cannot edit this comment because you're not the author!`,
+            if(!existingComment) return res.status(404).json({
+                message: `Oops, we couldn't find your comment as it does not exist or may have already been deleted by you!`,
                 success: false
             })
 
-            if(!existingComment) return res.status(404).json({
-                message: `Oops, we couldn't find your comment as it does not exist or may have already been deleted by you!`,
+            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
+                message: `You cannot edit this comment because you're not the author!`,
                 success: false
             })
 
@@ -90,13 +85,13 @@ class CommentController{
             
             // Finds the comment
             const existingComment = await comment.find({_id: id, deleted: false})
-            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
-                message: `You cannot delete this comment because you're not the author`,
+            if(!existingComment) return res.status(404).json({
+                message: `Oops, we couldn't find your comment as it does not exist or may have already been deleted by you!`,
                 success: false
             })
 
-            if(!existingComment) return res.status(404).json({
-                message: `Oops, we couldn't find your comment as it does not exist or may have already been deleted by you!`,
+            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
+                message: `You cannot delete this comment because you're not the author`,
                 success: false
             })
 
