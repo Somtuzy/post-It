@@ -1,3 +1,4 @@
+const { log } = require('console')
 const postit = require('../services/postit.service')
 const user = require('../services/user.service')
 
@@ -194,8 +195,7 @@ class PostitController{
     async getUserPostById(req, res) {
         try {
             const { userid, id } = req.params
-            const author = await user.find({_id: userid})
-            const existingPost = await postit.find({_id: id, author: author._id, deleted: false})
+            const existingPost = await postit.find({_id: id, author: userid, deleted: false})
 
             // Sends a message if the specified postit does not exist
             if(!existingPost) return res.status(404).json({
@@ -220,8 +220,13 @@ class PostitController{
     // Getting a user's postits by handle
     async getUserPostsByHandle(req, res) {
         try {
-            let { handle } = req.params
+            const { handle } = req.params
             const existingUser = await user.find({username: handle})
+
+            if(!existingUser) return res.status(404).send({
+                success: false,
+                message: `Oops, it seems like this user does not exist`
+            })
 
             const existingPosts = await postit.findAll({author: existingUser._id, deleted: false})
 
