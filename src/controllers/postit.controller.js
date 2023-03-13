@@ -10,6 +10,11 @@ class PostitController{
 
             // Finds the user making the postit request
             const existingUser = await user.find({_id: userId, deleted: false})
+
+            if(!content) return res.status(403).json({
+                message: `Please write your postit!`,
+                success: false
+            })
             
             let newPost = await postit.create({author: existingUser._id, content})
             await newPost.save()
@@ -41,14 +46,14 @@ class PostitController{
             // Finds the post
             const existingPost = await postit.find({_id: id})
 
-            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
-                success: false,
-                message: `You cannot edit this postit because you're not the author`
-            })
-
             if(!existingPost) return res.status(404).json({
                 message: `Oops, we couldn't find this postit as it does not exist or may have already been deleted by you!`,
                 success: false
+            })
+
+            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
+                message: `You cannot edit this postit because you're not the author`,
+                success: false,
             })
 
             if (!content) return res.status(403).json({
@@ -80,13 +85,13 @@ class PostitController{
             // Finds the postit
             const existingPost = await postit.find({_id: id})
 
-            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
-                message: `You cannot delete this postit because you're not the author`,
+            if(!existingPost) return res.status(404).json({
+                message: `Oops, we couldn't find this postit as it does not exist or may have already been deleted by you!`,
                 success: false
             })
 
-            if(!existingPost) return res.status(404).json({
-                message: `Oops, we couldn't find this postit as it does not exist or may have already been deleted by you!`,
+            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
+                message: `You cannot delete this postit because you're not the author`,
                 success: false
             })
 
