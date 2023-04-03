@@ -14,7 +14,7 @@ const authenticate = async (req, res, next) => {
         }
 
         // Checks if a token exists and returns a message if none was found
-        if (!token) return res.status(400).json({
+        if (!token || token === null) return res.status(400).json({
             message: 'You must be signed in to view content',
             success: false
         })
