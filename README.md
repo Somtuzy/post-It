@@ -21,11 +21,11 @@ Postit is a social media app where users can share and exchange thoughts in text
 • Use node app.js to run the program.
 
 
-## The link below contains a documentation on how to use this API below with samples of requests and responses:
+#### The link below contains a documentation on how to use this API below with samples of requests and responses:
  • [Postit API Documentation](https://postit-1rn8.onrender.com/api/v1/docs)
 
-## The link below contains a database model diagram showing the relationship between users, postits and comments (user replies):
+#### The link below contains a database model diagram showing the relationship between users, postits and comments (user replies):
  • [Postit Data Modelling](https://dbdesigner.page.link/5FAaVLnsH7uB8ned7)
 
 
-### Soft deleted postits were stored on the database for security reasons and to keep track of all past user interactions in accordance with privacy laws for future references.
+ Soft deleted postits were stored on the database for security reasons and to keep track of all past user interactions in accordance with privacy laws for future references.

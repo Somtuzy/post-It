@@ -9,15 +9,15 @@ class RecoverController{
             let foundUser;
     
             // Makes sure the user provides their email/username and password
-            if(!email && !username) return res.json(`Please enter your email address or username to continue`)
-            if(!password) return res.json(`Please enter your password to continue`)
+            if(!email && !username) return res.status(400).json(`Please enter your email address or username to continue`)
+            if(!password) return res.status(400).json(`Please enter your password to continue`)
 
             // Makes sure a user isn't signing in with an email and username associated with a disabled user
             foundUser = await user.findWithDetails({ $or: [{ username: username }, { email: email }] })
 
             // Returns a message if user doesn't exist
             if(!foundUser || foundUser === null){
-                return res.status(400).json({
+                return res.status(404).json({
                     message: `User does not exist, would you like to sign up instead?`,
                     success: false
                 })
@@ -28,7 +28,7 @@ class RecoverController{
     
             // Sends a message if the input password doesn't match
             if(!isValid){
-                return res.status(400).json({
+                return res.status(401).json({
                     message: `Incorrect password, please retype your password`,
                     success: false
                 })
@@ -67,14 +67,14 @@ class RecoverController{
             console.log(`Token successfully generated for ${foundUser}`);
     
             // Sends the token to the client side for it to be set as the request header using axios
-            return res.json({
+            return res.status(200).json({
                 success: true,
                 token: token, 
                 user: foundUser, 
                 message: `User account ${foundUser.username} recovered successfully!`
             })
         } catch (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })

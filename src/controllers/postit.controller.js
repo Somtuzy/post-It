@@ -12,7 +12,7 @@ class PostitController{
             // Finds the user making the postit request
             const existingUser = await user.find({_id: userId, deleted: false})
 
-            if(!content) return res.status(403).json({
+            if(!content) return res.status(401).json({
                 message: `Please write your postit!`,
                 success: false
             })
@@ -30,7 +30,7 @@ class PostitController{
                 data: newPost
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -51,13 +51,13 @@ class PostitController{
                 message: `Oops, we couldn't find this postit as it does not exist or may have already been deleted by you!`,
                 success: false
             })
-
-            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
+            
+            if (userId !== existingPost.author) return res.status(403).json({
                 message: `You cannot edit this postit because you're not the author`,
                 success: false,
             })
-
-            if (!content) return res.status(403).json({
+            
+            if (!content) return res.status(401).json({
                 message: `Please write your postit`,
                 success: false
             })
@@ -70,7 +70,7 @@ class PostitController{
                 data: updatedPost
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -91,7 +91,7 @@ class PostitController{
                 success: false
             })
 
-            if (userId.toString() !== existingPost.author._id.toString()) return res.status(403).json({
+            if (userId !== existingPost.author) return res.status(403).json({
                 message: `You cannot delete this postit because you're not the author`,
                 success: false
             })
@@ -107,7 +107,7 @@ class PostitController{
                 data: existingPost
             })
         } catch (err) {
-            return res.send({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -133,9 +133,9 @@ class PostitController{
                 data: existingPost
             })
         } catch (err) {
-            return res.send({
+            return res.status(500).json({
                 message: err.message,
-                success: false,
+                success: false
             })
         }  
     }
@@ -158,7 +158,7 @@ class PostitController{
                 data: postits
             })
         } catch (err) {
-            return res.send({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -191,7 +191,7 @@ class PostitController{
                 data: postits
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -224,7 +224,7 @@ class PostitController{
                 data: existingPost
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -257,7 +257,7 @@ class PostitController{
                 data: existingPosts
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })

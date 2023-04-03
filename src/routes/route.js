@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const signinRouter = require('./user.signin.route')
+const authRouter = require('./auth.route')
 const userRouter = require('./user.route')
 const postitRouter = require('./postit.route')
 const commentRouter = require('./comment.route')
@@ -7,10 +7,10 @@ const docsUrl = process.env.DOCS_URL
 
 const router = Router()
 
-router.use('/v1', signinRouter)
-router.use('/v1', userRouter)
-router.use('/v1', postitRouter)
-router.use('/v1', commentRouter)
+router.use('/auth', authRouter)
+router.use('/users', userRouter)
+router.use('/postits', postitRouter)
+router.use('/', commentRouter)
 
 // Redirects to API documentation
 router.use('/v1/docs', (req, res) => {

@@ -25,13 +25,13 @@ class CommentController{
             await postit.updateOne({_id: existingPostit._id}, newComment._id)
             await user.updateOne({_id: existingUser._id}, newComment._id)
 
-            return res.status(200).json({
+            return res.status(201).json({
                 message: `Your comment has been sent successfully!`,
                 success: true,
                 data: newComment
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -45,7 +45,7 @@ class CommentController{
             const { content } = req.body
             const userId = req.user.id
 
-            if(!content) return res.status(403).json({
+            if(!content) return res.status(401).json({
                 message: `Please write your comment`,
                 success: false
             })
@@ -57,7 +57,7 @@ class CommentController{
                 success: false
             })
 
-            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
+            if (userId !== existingComment.author._id.toString()) return res.status(403).json({
                 message: `You cannot edit this comment because you're not the author!`,
                 success: false
             })
@@ -70,7 +70,7 @@ class CommentController{
                 data: updatedComment
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -90,7 +90,7 @@ class CommentController{
                 success: false
             })
 
-            if (userId.toString() !== existingComment.author._id.toString()) return res.status(403).json({
+            if (userId !== existingComment.author._id.toString()) return res.status(403).json({
                 message: `You cannot delete this comment because you're not the author`,
                 success: false
             })
@@ -106,7 +106,7 @@ class CommentController{
                 data: existingComment
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -132,7 +132,7 @@ class CommentController{
                 data: existingComment
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -157,7 +157,7 @@ class CommentController{
                 data: comments
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -191,7 +191,7 @@ class CommentController{
                 data: existingComment
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
@@ -225,7 +225,7 @@ class CommentController{
                 data: comments
             })
         } catch (err) {
-            return res.json({
+            return res.status(500).json({
                 message: err.message,
                 success: false
             })
