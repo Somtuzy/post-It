@@ -59,32 +59,21 @@ class UserController {
       updatedUser = await user.find({ _id: updatedUser._id }, "-password -replies -postits -deleted");
 
       // Sends a success message and displays the updated user
-      if(data.fullname) return res.status(200).json({
-        message: `Fullname updated successfully!`,
-        success: true,
-        data: updatedUser
-      });
+      const message = {}
 
-      if(data.username) return res.status(200).json({
-        message: `Username updated successfully!`,
-        success: true,
-        data: updatedUser
-      });
+      // Sends a success message and displays the updated user
+      if(data.fullname) message.fullname = `Updated successfully!`;
 
-      if(data.email) return res.status(200).json({
-        message: `Email updated successfully!`,
-        success: true,
-        data: updatedUser
-      });
+      if(data.username) message.username = `Updated successfully!`;
+
+      if(data.email) message.email = `Updated successfully!`;
       
-      if(data.age) return res.status(200).json({
-        message: `Age updated successfully!`,
-        success: true,
-        data: updatedUser
-      });
-
-      if(data.password) return res.status(200).json({
-        message: `Password changed successfully!`,
+      if(data.age) message.age = `Updated successfully!`;
+    
+      if(data.password) message.password = `Changed successfully!`;
+    
+      return res.status(200).json({
+        message: message,
         success: true
       });
     } catch (err) {
