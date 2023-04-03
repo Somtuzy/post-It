@@ -6,30 +6,18 @@ const {
     updatePost,
     deletePost, 
     getPost, 
-    getPosts, 
-    getUserPosts, 
-    getUserPostById, 
-    getUserPostsByHandle 
+    getPosts 
 } = require('../controllers/postit.controller')
 
 const router = Router()
 
-router.route('/postits')
+router.route('/')
 .post(authenticate, validatePostitInputs, createPost)
 .get(authenticate, getPosts)
 
-router.route('/postits/:id')
+router.route('/:id')
 .put(authenticate, updatePost)
 .get(authenticate, getPost)
 .delete(authenticate, deletePost)
-
-router.route('/users/@:handle/postits')
-.get(authenticate, getUserPostsByHandle)
-
-router.route('/users/:userid/postits')
-.get(authenticate, getUserPosts)
-
-router.route('/users/:userid/postits/:id')
-.get(authenticate, getUserPostById)
 
 module.exports = router;
